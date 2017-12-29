@@ -2,8 +2,12 @@ package twitter;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extract consists of methods that extract information from a list of tweets.
@@ -15,7 +19,11 @@ import java.util.Set;
 public class Extract {
     
     public static void main(String[] args) {
-        
+        final Instant d4 = Instant.parse("2016-02-17T11:30:00Z");
+        final Tweet tweet6 = new Tweet(6, "Honnan", "All my friends @joe and @kevin", d4);
+        final Tweet tweet5 = new Tweet(5, "Marichellis", "Under the see @123fish!", d4);
+        getMentionedUsers(Arrays.asList(tweet5, tweet6));
+        System.out.println("@123fish!".matches("[^A-Za-z_-]"));
     }
 
     /**
@@ -29,6 +37,7 @@ public class Extract {
     public static Timespan getTimespan(List<Tweet> tweets) {
         assert tweets.get(0).getTimestamp() != null : "first tweets.timestamp should not be null";
         assert tweets.get(tweets.size() - 1).getTimestamp() != null : "last tweets.timestamp should not be null";
+        assert tweets.size() < 2 : "tweets should have at list two entries";
         
         final Instant d1 = Instant.parse(tweets.get(0).getTimestamp().toString());
         final Instant d2 = Instant.parse(tweets.get(tweets.size() - 1).getTimestamp().toString());
@@ -55,8 +64,32 @@ public class Extract {
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
         
-        throw new RuntimeException("not implemented");
+        Set<String> usernames = new HashSet<>();
+        
+        for (Tweet t : tweets) {
+                String[] words = t.getText().split("\\s");
+                for (String w : words) {
+                    if (w.startsWith("@")) {
+                        String username = w.substring(1);
+                        if (isValid(username)) {
+                            System.out.println(username);
+                            usernames.add(username);
+                        }
+                     }
+                }
+ 
+        }
+        
+        return usernames;
     }
+    
+    
+    public static boolean isValid(String username) {
+        Pattern p = Pattern.compile("[^A-Za-z_-]");
+        Matcher m = p.matcher(username);
+        return m.find() == false;
+    }
+    
 
     /* Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved.
      * Redistribution of original or derived work requires explicit permission.

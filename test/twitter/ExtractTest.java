@@ -3,10 +3,10 @@ package twitter;
 import static org.junit.Assert.*;
 
 /*
- * Testing strategy
+ * Testing strategy for getTimespan
  *
  * Partition the inputs as follows:
- * tweets.size() == 0;
+ * more than one user 
  * tweets.size() == 1;
  * tweets.timestamp == null;
  * 
@@ -14,6 +14,25 @@ import static org.junit.Assert.*;
  * more than one Tweet.
  * 
  */
+
+
+/*
+ * Testing strategy for getMentionedUsers()
+ *
+ * Partition the inputs as follows:
+ * tweet.text is empty;
+ * tweet.text contains an email.
+ * Extract.getMentionedUsers().size() >= 2;
+ * Extract.getMentionedUsers().size() == 1;
+ * Extract.getMentionedUsers() contains characters other than
+ * letters (A-Z or a-z), digits, underscore ("_"), or hyphen ("-").
+ * 
+ * 
+ * Includes 1 because since Timespan calculates the interval between 2 endpoints, it requires 
+ * more than one Tweet.
+ * 
+ */
+
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,13 +52,17 @@ public class ExtractTest {
     private static final Instant d1 = Instant.parse("2016-02-17T10:00:00Z");
     private static final Instant d2 = Instant.parse("2016-02-17T11:00:00Z");
     private static final Instant d3 = null;
+    private static final Instant d4 = Instant.parse("2016-02-17T11:30:00Z");
     
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
-    private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
-    private static final Tweet tweet3 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #jerry", null);
+    private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes @hype", d2);
+    private static final Tweet tweet3 = new Tweet(3, "bbitdiddle", "rivest talk in 30 minutes #jerry", null);
+    private static final Tweet tweet4 = new Tweet(4, "Marilu", "rivest talk in 30 minutes. Email: johnatan@alyssa.com", d4);
+    private static final Tweet tweet5 = new Tweet(5, "Marichellis", "Under the see @123fish!", d4);
+    private static final Tweet tweet6 = new Tweet(6, "Honnan", "All my friends @joe and @kevin", d4);
     
     private static final List<Tweet> single = Arrays.asList(tweet1);
-    private static final List<Tweet> empty = new ArrayList<Tweet>();
+    private static final List<Tweet> zero = new ArrayList<Tweet>();
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -55,9 +78,15 @@ public class ExtractTest {
     }
     
 //    @Test
+//    public void testGetTimespanZeroTweets() {
+//        
+//        assertEquals(0, Extract.getTimespan(zero));
+//    }
+    
+//    @Test
 //    public void testGetTimespanEmptyTimestamp() {
 //        
-//        assertNotNull("tweets.timestamp should not be null", Extract.getTimespan(Arrays.asList(tweet1, tweet2, tweet3)));
+//        assertEquals("tweets.timestamp should not be null", Extract.getTimespan(Arrays.asList(tweet1, tweet2, tweet3)));
 //    }
     
     @Test
@@ -65,6 +94,28 @@ public class ExtractTest {
         Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet1));
         
         assertTrue("expected empty set", mentionedUsers.isEmpty());
+    }
+    
+    @Test
+    public void testGetMentionedUsersEmail() {
+        Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet4));
+        
+        assertTrue("expected empty set when email included in text", mentionedUsers.isEmpty());
+    }
+    
+    @Test
+    public void testGetMentionedUsersWithMultipleUsers() {
+        Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet6));
+        
+        assertTrue("expected two or more users", mentionedUsers.size() >= 2);
+    }
+    
+
+    @Test
+    public void testGetMentionedUsersWithIllegalCharacters() {
+        Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet5));
+        
+        assertTrue("invalid username", mentionedUsers.isEmpty());
     }
 
     /*
