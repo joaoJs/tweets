@@ -19,11 +19,17 @@ import java.util.regex.Pattern;
 public class Extract {
     
     public static void main(String[] args) {
+        final Instant d1 = Instant.parse("2016-02-17T10:00:00Z");
+        final Instant d2 = Instant.parse("2016-02-17T11:00:00Z");
         final Instant d4 = Instant.parse("2016-02-17T11:30:00Z");
+        final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
+        final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes @hype", d2);
         final Tweet tweet6 = new Tweet(6, "Honnan", "All my friends @joe and @kevin", d4);
         final Tweet tweet5 = new Tweet(5, "Marichellis", "Under the see @123fish!", d4);
         getMentionedUsers(Arrays.asList(tweet5, tweet6));
-        System.out.println("@123fish!".matches("[^A-Za-z_-]"));
+        Timespan t = getTimespan(Arrays.asList(tweet1, tweet2, tweet6));
+        System.out.println(t.getStart());
+        System.out.println(t.getEnd());
     }
 
     /**
@@ -37,7 +43,7 @@ public class Extract {
     public static Timespan getTimespan(List<Tweet> tweets) {
         assert tweets.get(0).getTimestamp() != null : "first tweets.timestamp should not be null";
         assert tweets.get(tweets.size() - 1).getTimestamp() != null : "last tweets.timestamp should not be null";
-        assert tweets.size() < 2 : "tweets should have at list two entries";
+        assert tweets.size() >= 2 : "tweets should have at list two entries";
         
         final Instant d1 = Instant.parse(tweets.get(0).getTimestamp().toString());
         final Instant d2 = Instant.parse(tweets.get(tweets.size() - 1).getTimestamp().toString());
