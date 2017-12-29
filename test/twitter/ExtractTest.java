@@ -2,8 +2,23 @@ package twitter;
 
 import static org.junit.Assert.*;
 
+/*
+ * Testing strategy
+ *
+ * Partition the inputs as follows:
+ * tweets.size() == 0;
+ * tweets.size() == 1;
+ * tweets.timestamp == null;
+ * 
+ * Includes 1 because since Timespan calculates the interval between 2 endpoints, it requires 
+ * more than one Tweet.
+ * 
+ */
+
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,9 +32,14 @@ public class ExtractTest {
     
     private static final Instant d1 = Instant.parse("2016-02-17T10:00:00Z");
     private static final Instant d2 = Instant.parse("2016-02-17T11:00:00Z");
+    private static final Instant d3 = null;
     
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
+    private static final Tweet tweet3 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #jerry", null);
+    
+    private static final List<Tweet> single = Arrays.asList(tweet1);
+    private static final List<Tweet> empty = new ArrayList<Tweet>();
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -33,6 +53,12 @@ public class ExtractTest {
         assertEquals("expected start", d1, timespan.getStart());
         assertEquals("expected end", d2, timespan.getEnd());
     }
+    
+//    @Test
+//    public void testGetTimespanEmptyTimestamp() {
+//        
+//        assertNotNull("tweets.timestamp should not be null", Extract.getTimespan(Arrays.asList(tweet1, tweet2, tweet3)));
+//    }
     
     @Test
     public void testGetMentionedUsersNoMention() {

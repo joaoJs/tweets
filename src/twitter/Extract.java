@@ -1,5 +1,7 @@
 package twitter;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +13,10 @@ import java.util.Set;
  * private methods or classes if you like.
  */
 public class Extract {
+    
+    public static void main(String[] args) {
+        
+    }
 
     /**
      * Get the time period spanned by tweets.
@@ -21,7 +27,15 @@ public class Extract {
      *         every tweet in the list.
      */
     public static Timespan getTimespan(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        assert tweets.get(0).getTimestamp() != null : "first tweets.timestamp should not be null";
+        assert tweets.get(tweets.size() - 1).getTimestamp() != null : "last tweets.timestamp should not be null";
+        
+        final Instant d1 = Instant.parse(tweets.get(0).getTimestamp().toString());
+        final Instant d2 = Instant.parse(tweets.get(tweets.size() - 1).getTimestamp().toString());
+        
+        Timespan res = new Timespan(d1,d2);
+        return res;
+     
     }
 
     /**
@@ -40,6 +54,7 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
+        
         throw new RuntimeException("not implemented");
     }
 
