@@ -1,12 +1,22 @@
 package twitter;
 
 import static org.junit.Assert.*;
-
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+
+/*
+ * Testing strategy for getTimespan
+ *
+ * Partition the inputs as follows:
+ * username not in list or username has an invalid format 
+ * username found multiple times 
+ * 
+ * 
+ */
 
 public class FilterTest {
 
@@ -20,6 +30,8 @@ public class FilterTest {
     
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
+    private static final Tweet tweet3 = new Tweet(3, "alyssa", "is it reasonable to talk about rivest so much?", d1);
+    private static final Tweet tweet4 = new Tweet(4, "alyssa", "rivest talk in 30 minutes #hype", d2);
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -32,6 +44,22 @@ public class FilterTest {
         
         assertEquals("expected singleton list", 1, writtenBy.size());
         assertTrue("expected list to contain tweet", writtenBy.contains(tweet1));
+    }
+    
+    @Test
+    public void testWrittenByMultipleTweetsMultipleResult() {
+        List<Tweet> writtenBy = Filter.writtenBy(Arrays.asList(tweet1, tweet2, tweet3, tweet4), "alyssa");
+        
+        assertEquals("expected list with multiple ocurrences of username", 3, writtenBy.size());
+        assertTrue("expected list to contain tweet", writtenBy.contains(tweet1));
+    }
+    
+    @Test
+    public void testWrittenByMultipleTweetsUsernameNotFound() {
+        List<Tweet> writtenBy = Filter.writtenBy(Arrays.asList(tweet2), "alyssa");
+        
+        assertEquals("expected username not found in list", 0, writtenBy.size());
+        assertTrue("expected list to not contain tweet", writtenBy.contains(tweet1) == false);
     }
     
     @Test
