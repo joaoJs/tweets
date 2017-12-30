@@ -11,10 +11,14 @@ import org.junit.Test;
 /*
  * Testing strategy for getTimespan
  *
+ *writtenBy()
  * Partition the inputs as follows:
  * username not in list or username has an invalid format 
  * username found multiple times 
  * 
+ * inTimespan()
+ * no tweets within timespan
+ * timespan not valid --> for this one method will throw an IllegalArgumentException;
  * 
  */
 
@@ -27,11 +31,13 @@ public class FilterTest {
     
     private static final Instant d1 = Instant.parse("2016-02-17T10:00:00Z");
     private static final Instant d2 = Instant.parse("2016-02-17T11:00:00Z");
+    private static final Instant d3 = Instant.parse("2016-02-17T10:30:00Z");
+    private static final Instant d4 = Instant.parse("2016-02-18T10:30:00Z");
     
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
-    private static final Tweet tweet3 = new Tweet(3, "alyssa", "is it reasonable to talk about rivest so much?", d1);
-    private static final Tweet tweet4 = new Tweet(4, "alyssa", "rivest talk in 30 minutes #hype", d2);
+    private static final Tweet tweet3 = new Tweet(3, "alyssa", "is it reasonable to talk about rivest so much?", d3);
+    private static final Tweet tweet4 = new Tweet(4, "alyssa", "rivest talk in 30 minutes #hype", d4);
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -72,6 +78,17 @@ public class FilterTest {
         assertFalse("expected non-empty list", inTimespan.isEmpty());
         assertTrue("expected list to contain tweets", inTimespan.containsAll(Arrays.asList(tweet1, tweet2)));
         assertEquals("expected same order", 0, inTimespan.indexOf(tweet1));
+    }
+    
+    @Test
+    public void testInTimespanMultipleTweetsZeroResults() {
+        Instant testStart = Instant.parse("2016-02-17T09:00:00Z");
+        Instant testEnd = Instant.parse("2016-02-17T12:00:00Z");
+        
+        List<Tweet> inTimespan = Filter.inTimespan(Arrays.asList(tweet4), new Timespan(testStart, testEnd));
+        
+        assertTrue("expected empty list", inTimespan.isEmpty());
+        assertFalse("expected list to not contain tweets", inTimespan.containsAll(Arrays.asList(tweet4)));
     }
     
     @Test

@@ -1,5 +1,7 @@
 package twitter;
 
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +41,11 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> inTimespan(List<Tweet> tweets, Timespan timespan) {
-        throw new RuntimeException("not implemented");
+            if (timespan.getStart().isAfter(timespan.getEnd())) {
+                throw new IllegalArgumentException("requires start <= end");
+            }
+          return  tweets.stream().filter(t -> t.getTimestamp().isAfter(timespan.getStart()) && t.getTimestamp().isBefore(timespan.getEnd()))
+                                 .collect(Collectors.toList());
     }
 
     /**
