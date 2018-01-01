@@ -2,6 +2,7 @@ package twitter;
 
 import static org.junit.Assert.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,13 @@ import org.junit.Test;
  * inTimespan()
  * no tweets within timespan
  * timespan not valid --> for this one method will throw an IllegalArgumentException;
+ * 
+ * containing()
+ * if list of words is null, assert will catch it
+ * list of words contains multiple words and a none matching match
+ * list of words contains multiple words and a single matching match
+ * list of words contains multiple words and multiple matching matches
+ * method should be case insensitive
  * 
  */
 
@@ -99,6 +107,25 @@ public class FilterTest {
         assertTrue("expected list to contain tweets", containing.containsAll(Arrays.asList(tweet1, tweet2)));
         assertEquals("expected same order", 0, containing.indexOf(tweet1));
     }
+    
+    @Test
+    public void testContainingMultipleWordsAndCaseInsensitive() {
+        List<Tweet> containing = Filter.containing(Arrays.asList(tweet2, tweet3), Arrays.asList("minutes", "Reasonable"));
+        
+        assertFalse("expected non-empty list", containing.isEmpty());
+        assertTrue("expected list to contain tweets", containing.containsAll(Arrays.asList(tweet2, tweet3)));
+        assertEquals("expected same order", 0, containing.indexOf(tweet2));
+        assertEquals("expected same order", 2, containing.size());
+    }
+    
+    @Test
+    public void testContainingNoMatches() {
+        List<Tweet> containing = Filter.containing(Arrays.asList(tweet3, tweet4), Arrays.asList("amerre","Switzerland"));
+        
+        assertTrue("expected non-empty list", containing.isEmpty());
+    }
+    
+    
 
     /*
      * Warning: all the tests you write here must be runnable against any Filter

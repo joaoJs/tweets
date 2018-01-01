@@ -1,6 +1,7 @@
 package twitter;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class Filter {
             }
           return  tweets.stream().filter(t -> t.getTimestamp().isAfter(timespan.getStart()) && t.getTimestamp().isBefore(timespan.getEnd()))
                                  .collect(Collectors.toList());
-    }
+    }   
 
     /**
      * Find tweets that contain certain words.
@@ -64,7 +65,20 @@ public class Filter {
      *         same order as in the input list.
      */
     public static List<Tweet> containing(List<Tweet> tweets, List<String> words) {
-        throw new RuntimeException("not implemented");
+        assert words != null : "words cannot be null";
+        List<Tweet> result = new ArrayList<Tweet>();
+        List<String> lowerWords = new ArrayList<String>();
+        for (String w : words) {
+            lowerWords.add(w.toLowerCase());
+        }
+        for (Tweet t : tweets) {
+            final List<String> wordsFromThisTweet = Arrays.asList(t.getText().split("\\s"));
+            final List<String> matches = wordsFromThisTweet.stream().filter(w -> lowerWords.contains(w.toLowerCase())).collect(Collectors.toList());
+            if (matches.size() > 0) {
+                result.add(t);
+            }
+        }
+        return result;
     }
 
     /* Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved.
