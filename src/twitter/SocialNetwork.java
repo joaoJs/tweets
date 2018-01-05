@@ -1,8 +1,13 @@
 package twitter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * SocialNetwork provides methods that operate on a social network.
@@ -38,7 +43,15 @@ public class SocialNetwork {
      *         either authors or @-mentions in the list of tweets.
      */
     public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        assert tweets != null : "tweets list cannot be null";
+        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+        for (Tweet t : tweets) {
+            Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(t));
+            if (!mentionedUsers.isEmpty()) {
+                result.put(t.getAuthor(), mentionedUsers);
+            }
+        }
+        return result;
     }
 
     /**
@@ -51,7 +64,19 @@ public class SocialNetwork {
      *         descending order of follower count.
      */
     public static List<String> influencers(Map<String, Set<String>> followsGraph) {
-        throw new RuntimeException("not implemented");
+        assert followsGraph != null : "followsGraph cannot be null";
+        List<String> result = new ArrayList<String>();
+        for (Entry<String, Set<String>> entry : followsGraph.entrySet())
+        {
+            if (!entry.getValue().isEmpty()) {
+                for (String name : entry.getValue()) {
+                    if (!result.contains(name)) {
+                        result.add(name);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /* Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved.
