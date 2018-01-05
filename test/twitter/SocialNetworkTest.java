@@ -94,6 +94,14 @@ public class SocialNetworkTest {
         
         assertTrue("expected multiple influencers", influencers.size() > 1);
     }
+    
+    @Test
+    public void testInfluencersMultipleDescendingOrder() {
+        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4, tweet5));
+        List<String> influencers = SocialNetwork.influencers(followsGraph);
+        
+        assertTrue("expected multiple influencers", influencers.size() > 1);
+    }
 
     /*
      * Warning: all the tests you write here must be runnable against any
