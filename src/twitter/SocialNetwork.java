@@ -2,6 +2,7 @@ package twitter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,18 +66,25 @@ public class SocialNetwork {
      */
     public static List<String> influencers(Map<String, Set<String>> followsGraph) {
         assert followsGraph != null : "followsGraph cannot be null";
-        List<String> result = new ArrayList<String>();
+        Map<String, Integer> counts = new HashMap<String, Integer>();
         for (Entry<String, Set<String>> entry : followsGraph.entrySet())
         {
             if (!entry.getValue().isEmpty()) {
+                entry.getValue().forEach(System.out::println);
                 for (String name : entry.getValue()) {
-                    if (!result.contains(name)) {
-                        result.add(name);
+                    if (counts.containsKey(name)) {
+                        int n = counts.get(name)+1;
+                        counts.replace(name, n);
+                    } else {
+                        counts.put(name, 1);
                     }
                 }
             }
         }
-        return result;
+        return  counts.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());  
     }
 
     /* Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved.

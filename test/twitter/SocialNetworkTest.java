@@ -32,75 +32,76 @@ public class SocialNetworkTest {
      * 
      */
     
-    private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about @harry and @maria so much?", null);
+    private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about @harry or @sahyl and @maria so much?", null);
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", null);
     private static final Tweet tweet3 = new Tweet(3, "john", "is it reasonable to talk about @sahyl so much?", null);
     private static final Tweet tweet4 = new Tweet(4, "harry", "rivest talk in 30 minutes with @maria #hype", null);
-    private static final Tweet tweet5 = new Tweet(5, "harry", "rivest talk in 30 minutes with @maria #hype", null);
+    private static final Tweet tweet5 = new Tweet(5, "ana", "rivest talk is in 30 minutes with @maria #hype", null);
     
-    @Test(expected=AssertionError.class)
-    public void testAssertionsEnabled() {
-        assert false; // make sure assertions are enabled with VM argument: -ea
-    }
-    
-    @Test
-    public void testGuessFollowsGraphEmpty() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(new ArrayList<>());
-        
-        assertTrue("expected empty graph", followsGraph.isEmpty());
-    }
-    
-    @Test
-    public void testGuessFollowsGraphNone() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet2));
-        
-        assertTrue("expected empty graph", followsGraph.isEmpty());
-    }
-    
-    @Test
-    public void testGuessFollowsGraphOneUserFollowsOne() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet2, tweet3));
-        
-        assertTrue("expected one follower", followsGraph.size() == 1);
-    }
-    
-    @Test
-    public void testGuessFollowsGraphOneMultipleFollowers() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4));
-        
-        assertTrue("expected multiple followers", followsGraph.size() > 1);
-    }
-    
-    @Test
-    public void testInfluencersEmpty() {
-        Map<String, Set<String>> followsGraph = new HashMap<>();
-        List<String> influencers = SocialNetwork.influencers(followsGraph);
-        
-        assertTrue("expected empty list", influencers.isEmpty());
-    }
-    
-    @Test
-    public void testInfluencersOneName() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet4, tweet5));
-        List<String> influencers = SocialNetwork.influencers(followsGraph);
-        
-        assertTrue("expected one name", influencers.size() == 1);
-    }
-    
-    @Test
-    public void testInfluencersMultiple() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4, tweet5));
-        List<String> influencers = SocialNetwork.influencers(followsGraph);
-        
-        assertTrue("expected multiple influencers", influencers.size() > 1);
-    }
-    
+//    @Test(expected=AssertionError.class)
+//    public void testAssertionsEnabled() {
+//        assert false; // make sure assertions are enabled with VM argument: -ea
+//    }
+//    
+//    @Test
+//    public void testGuessFollowsGraphEmpty() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(new ArrayList<>());
+//        
+//        assertTrue("expected empty graph", followsGraph.isEmpty());
+//    }
+//    
+//    @Test
+//    public void testGuessFollowsGraphNone() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet2));
+//        
+//        assertTrue("expected empty graph", followsGraph.isEmpty());
+//    }
+//    
+//    @Test
+//    public void testGuessFollowsGraphOneUserFollowsOne() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet2, tweet3));
+//        
+//        assertTrue("expected one follower", followsGraph.size() == 1);
+//    }
+//    
+//    @Test
+//    public void testGuessFollowsGraphOneMultipleFollowers() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4));
+//        
+//        assertTrue("expected multiple followers", followsGraph.size() > 1);
+//    }
+//    
+//    @Test
+//    public void testInfluencersEmpty() {
+//        Map<String, Set<String>> followsGraph = new HashMap<>();
+//        List<String> influencers = SocialNetwork.influencers(followsGraph);
+//        
+//        assertTrue("expected empty list", influencers.isEmpty());
+//    }
+//    
+//    @Test
+//    public void testInfluencersOneName() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet4, tweet5));
+//        List<String> influencers = SocialNetwork.influencers(followsGraph);
+//        
+//        assertTrue("expected one name", influencers.size() == 1);
+//    }
+//    
+//    @Test
+//    public void testInfluencersMultiple() {
+//        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4, tweet5));
+//        List<String> influencers = SocialNetwork.influencers(followsGraph);
+//        
+//        assertTrue("expected multiple influencers", influencers.size() > 1);
+//    }
+//    
     @Test
     public void testInfluencersMultipleDescendingOrder() {
         Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet1, tweet2, tweet3, tweet4, tweet5));
         List<String> influencers = SocialNetwork.influencers(followsGraph);
         
-        assertTrue("expected multiple influencers", influencers.size() > 1);
+        assertTrue("expected result in descending order", influencers.get(0).equals("maria"));
+        assertTrue("expected result in descending order", influencers.get(1).equals("sahyl"));
     }
 
     /*
